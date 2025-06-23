@@ -1,17 +1,17 @@
 {
-  "token": "MTM3OTg2NDc5NDQzNzI1NTM0MA.GDzihw.zBDbrxfxK8dQ432CRgfurSDFjUeLNEfkYVp9UY", 
-  "guildID": "1386333031148687621",
+  "token": "BOT TOKEN ", 
+  "guildID": "SERBER ID",
   "botDurum": [
-    "Kentro 🤍",
-    ".y yazarak komutları öğren!",
-    "Luxira Dev",
-    "Merhaba!"
+    "DURUM1",
+    "DURUM2",
+    "DURUM3",
+    "DURUM4"
   ],
   "footer": "Kentrocum 🗽",
-  "botOwners": ["692466311393181696"],
+  "botOwners": ["BOT OWNER ID"],
   "prefix": ".",
-  "voiceChannelID": "1386385868784402482",
-  "mongoURI": "mongodb+srv://kentrocum:kentroxd@kentrocumbot.4cgffu2.mongodb.net/kentrodb?retryWrites=true&w=majority&appName=kentrocumbot",
-  "weatherApiKey": "35c6c3f0601c4b189cf135132251906",
-  "exchangeAPIKey": "503bf45db85737abc094fe2b7fe09881"
+  "voiceChannelID": "SES KANALI ID",
+  "mongoURI": "MONGO URL",
+  "weatherApiKey": "APİKEY",
+  "exchangeAPIKey": "APİKEY"
 }
