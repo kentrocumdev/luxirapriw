@@ -1,4 +1,4 @@
-[![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=50&size=100&pause=1000&width=1865&height=90&lines=Luxira+Deveploment+Of+Owner+Kentro)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=60&pause=1000&width=1865&height=90&lines=Luxira+Dev+Owner+Kentro)](https://git.io/typing-svg)
 <br> </br>
 <h2>🗽LuxiraDEV Priw Altyapı</h2>
 <br> </br>
