@@ -5,7 +5,6 @@
 <br> </br>
 <a href="https://discord.gg/xGYfvwzYeA">[ ❓ ] Altyapıyı Kurdun Ve Hata Alıyorsan Buraya Tıkla!</a>
 <br> </br>
-<a href="#napirs">[ ⚠️ ] @napi-rs/canvas Hatası Alıyorsan Buraya Tıkla!</a>
 <br> </br>
 <strong>Discord sunucularınızda kullanabileceğiniz priw bot.</strong>
 <br> </br>
