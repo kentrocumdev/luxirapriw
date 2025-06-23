@@ -24,7 +24,7 @@
 ```diff
 npm install
 ```
-- `.y:` komuduyla tüm komutlara ulaşabilirsin.
+- `.y` komuduyla tüm komutlara ulaşabilirsin.
 
 <br> </br>
 <br> </br>
