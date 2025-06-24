@@ -13,5 +13,6 @@
   "voiceChannelID": "SES KANALI ID",
   "mongoURI": "MONGO URL",
   "weatherApiKey": "APİKEY",
-  "exchangeAPIKey": "APİKEY"
+  "exchangeAPIKey": "APİKEY",
+  "shipArkaplan": "arkaplanresimurl"
 }
