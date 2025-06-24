@@ -4,48 +4,55 @@ const { EmbedBuilder } = require('discord.js');
 module.exports = {
   name: 'banner',
   description: 'Kullanıcının bannerını gösterir.',
-  async execute(message, args) {
+
+  async execute(client, message, args) {
     let user;
 
-    if (message.reference) {
+    // Yanıt varsa önce ona bak
+    if (message.reference?.messageId) {
       try {
         const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
         user = repliedMessage.author;
       } catch {
-        user = message.author;
+        user = null;
       }
-    } else if (args[0]) {
+    }
+
+    // Argüman varsa mention ya da ID
+    if (!user && args[0]) {
       user = message.mentions.users.first();
       if (!user) {
-        user = await message.client.users.fetch(args[0]).catch(() => null);
+        user = await client.users.fetch(args[0]).catch(() => null);
       }
-      if (!user) user = message.author;
-    } else {
+    }
+
+    // Hâlâ kullanıcı yoksa mesaj sahibi
+    if (!user) {
       user = message.author;
     }
 
     try {
-      // Full fetch to get banner data
-      const fetchedUser = await message.client.users.fetch(user.id, { force: true });
+      const fetchedUser = await client.users.fetch(user.id, { force: true });
+
       if (!fetchedUser.banner) {
-        return message.reply('Bu kullanıcının bannerı yok.');
+        return message.channel.send("Bu kullanıcının bannerı yok.");
       }
 
-      const bannerURL = fetchedUser.bannerURL({ size: 4096, dynamic: true });
+      const bannerURL = `https://cdn.discordapp.com/banners/${fetchedUser.id}/${fetchedUser.banner}.${fetchedUser.banner.startsWith("a_") ? "gif" : "png"}?size=4096`;
 
       const embed = new EmbedBuilder()
-        .setTitle(`${user.username} adlı kullanıcının bannerı`)
+        .setTitle(`${fetchedUser.username} adlı kullanıcının bannerı`)
         .setImage(bannerURL)
         .setColor('#2f3136')
         .setFooter({
-          text: config.footer || message.client.user.username,
-          iconURL: message.client.user.displayAvatarURL()
+          text: config.footer || client.user.username,
+          iconURL: client.user.displayAvatarURL()
         });
 
-      message.reply({ embeds: [embed] });
+      message.channel.send({ embeds: [embed] });
     } catch (error) {
       console.error(error);
-      message.reply('Banner alınırken bir hata oluştu.');
+      message.channel.send("Banner alınırken bir hata oluştu.");
     }
   }
 };
