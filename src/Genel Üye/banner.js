@@ -1,14 +1,13 @@
+const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, ComponentType } = require('discord.js');
 const config = require('../../config.json');
-const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
   name: 'banner',
-  description: 'Kullanıcının bannerını gösterir.',
+  description: 'Kullanıcının bannerını ve avatarını gösterir.',
 
   async execute(client, message, args) {
     let user;
 
-    // Yanıt varsa önce ona bak
     if (message.reference?.messageId) {
       try {
         const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
@@ -18,41 +17,81 @@ module.exports = {
       }
     }
 
-    // Argüman varsa mention ya da ID
     if (!user && args[0]) {
-      user = message.mentions.users.first();
-      if (!user) {
-        user = await client.users.fetch(args[0]).catch(() => null);
-      }
+      user = message.mentions.users.first() || await client.users.fetch(args[0]).catch(() => null);
+      if (!user) return message.channel.send("Kullanıcı bulunamadı veya geçersiz bir ID girildi.");
     }
 
-    // Hâlâ kullanıcı yoksa mesaj sahibi
-    if (!user) {
-      user = message.author;
-    }
+    if (!user) user = message.author;
 
+    let userBannerURL = null;
     try {
       const fetchedUser = await client.users.fetch(user.id, { force: true });
+      if (fetchedUser.banner) {
+        userBannerURL = `https://cdn.discordapp.com/banners/${fetchedUser.id}/${fetchedUser.banner}.${fetchedUser.banner.startsWith("a_") ? "gif" : "png"}?size=4096`;
+      }
+    } catch (err) {
+      console.error(err);
+    }
 
-      if (!fetchedUser.banner) {
-        return message.channel.send("Bu kullanıcının bannerı yok.");
+    const avatarURL = user.displayAvatarURL({ size: 4096, dynamic: true });
+
+    // Başlangıçta banner varsa banner göster, yoksa avatar göster
+    const embed = new EmbedBuilder()
+      .setTitle(userBannerURL ? `${user.username} adlı kullanıcının bannerı` : `${user.username} adlı kullanıcının avatarı`)
+      .setColor('#2f3136')
+      .setFooter({ text: config.footer || client.user.username, iconURL: client.user.displayAvatarURL() })
+      .setImage(userBannerURL || avatarURL);
+
+    const options = [
+      {
+        label: 'Bannerı Göster',
+        description: 'Kullanıcının bannerını gösterir.',
+        value: 'banner',
+        emoji: '🖼️',
+      },
+      {
+        label: 'Avatarı Göster',
+        description: 'Kullanıcının avatarını gösterir.',
+        value: 'avatar',
+        emoji: '🖼️',
+      }
+    ];
+
+    const row = new ActionRowBuilder().addComponents(
+      new StringSelectMenuBuilder()
+        .setCustomId('select_banner_avatar')
+        .setPlaceholder('Birini seç...')
+        .addOptions(options)
+    );
+
+    const msg = await message.channel.send({ embeds: [embed], components: [row] });
+
+    const collector = msg.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 60000 });
+
+    collector.on('collect', async interaction => {
+      if (interaction.user.id !== message.author.id) {
+        return interaction.reply({ content: 'Bu menüyü sadece komutu kullanan kişi kullanabilir.', ephemeral: true });
       }
 
-      const bannerURL = `https://cdn.discordapp.com/banners/${fetchedUser.id}/${fetchedUser.banner}.${fetchedUser.banner.startsWith("a_") ? "gif" : "png"}?size=4096`;
+      if (interaction.values[0] === 'banner') {
+        if (userBannerURL) {
+          embed.setTitle(`${user.username} adlı kullanıcının bannerı`)
+            .setImage(userBannerURL);
+        } else {
+          return interaction.reply({ content: 'Bu kullanıcının bannerı yok.', ephemeral: true });
+        }
+      } else if (interaction.values[0] === 'avatar') {
+        embed.setTitle(`${user.username} adlı kullanıcının avatarı`)
+          .setImage(avatarURL);
+      }
 
-      const embed = new EmbedBuilder()
-        .setTitle(`${fetchedUser.username} adlı kullanıcının bannerı`)
-        .setImage(bannerURL)
-        .setColor('#2f3136')
-        .setFooter({
-          text: config.footer || client.user.username,
-          iconURL: client.user.displayAvatarURL()
-        });
+      await interaction.update({ embeds: [embed] });
+    });
 
-      message.channel.send({ embeds: [embed] });
-    } catch (error) {
-      console.error(error);
-      message.channel.send("Banner alınırken bir hata oluştu.");
-    }
+    collector.on('end', () => {
+      row.components[0].setDisabled(true);
+      msg.edit({ components: [row] }).catch(() => {});
+    });
   }
 };
